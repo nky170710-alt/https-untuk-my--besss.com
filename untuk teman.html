@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pertanyaan untuk Teman Baik</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 500px;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: #ff6f61;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    #downloadBtn { display: none; background: #4CAF50; }
+    #allAnswersBox { display:none; margin-top:15px; width:90%; height:140px; }
+    #answerList { text-align:left; max-height:140px; overflow:auto; padding-left:18px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="question">Halo teman baik, siap menjawab pertanyaan?</h2>
+    <input type="text" id="answerInput" placeholder="Tulis jawabanmu di sini...">
+    <br>
+    <button id="nextBtn" onclick="nextQuestion()">Lanjut</button>
+    <button id="downloadBtn" onclick="downloadAnswers()">Download Jawaban</button>
+
+    <div id="answers">
+      <h3>Jawaban Teman:</h3>
+      <ul id="answerList"></ul>
+    </div>
+
+    <!-- textarea untuk lihat & copy semua jawaban -->
+    <textarea id="allAnswersBox" readonly></textarea>
+  </div>
+
+  <script>
+    const questions = [
+      "Apa warna favorit kamu?",
+      "Kamu suka makan apa?",
+      "Kalau liburan, mau ke gunung atau pantai?",
+      "Pilih: tidur siang atau begadang?",
+      "Siapa sahabat terbaikmu?",
+      "Terakhir nih...",
+      "Teman baik pinjam dulu 100 😆💸"
+    ];
+
+    let index = 0;
+    let allAnswers = [];
+
+    function nextQuestion() {
+      const inputEl = document.getElementById("answerInput");
+      let input = inputEl.value.trim();
+
+      // jika input kosong, tetap izinkan melanjutkan tapi simpan '-' agar tidak hilang konteks
+      if (input === "") input = "(kosong)";
+
+      // simpan & tampilkan
+      allAnswers.push(questions[index] + " → " + input);
+      const li = document.createElement("li");
+      li.textContent = questions[index] + " → " + input;
+      document.getElementById("answerList").appendChild(li);
+
+      // reset input & lanjut
+      inputEl.value = "";
+      index++;
+
+      if (index < questions.length) {
+        document.getElementById("question").innerText = questions[index];
+      } else {
+        // selesai
+        document.getElementById("question").innerText = "🎉 Semua pertanyaan selesai!";
+        document.getElementById("answerInput").style.display = "none";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("downloadBtn").style.display = "inline-block";
+
+        // tampilkan box dengan semua jawaban supaya gampang dilihat & dicopy
+        const box = document.getElementById("allAnswersBox");
+        box.style.display = "block";
+        box.value = allAnswers.join("\n");
+      }
+    }
+
+    function downloadAnswers() {
+      let text = allAnswers.join("\n");
+      let blob = new Blob([text], { type: "text/plain" });
+      let link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "jawaban_teman.txt";
+      link.click();
+    }
+  </script>
+</body>
+</html>
